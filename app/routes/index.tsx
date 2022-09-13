@@ -1,14 +1,19 @@
-import type { LoaderFunction } from "@remix-run/node";
-import { Await, Link, useLoaderData } from "@remix-run/react";
+import { HeadersFunction, json, LoaderFunction } from "@remix-run/node";
+import { Await, Link, useLoaderData, useTransition } from "@remix-run/react";
 import { useState, Suspense } from "react";
 import { Theme, useTheme } from "utils/theme-provider";
 import CountryCard from "~/components/CountryCard";
 import Navbar from "~/components/Navbar";
 import { defer } from "@remix-run/node";
 import type { Country } from "./country/$id";
+import SkeletonCard from "../components/SkeletonCard";
 
 type LoaderData = {
   data: string[];
+};
+
+export let headers: HeadersFunction = () => {
+  return { "Cache-Control": "max-age=3600" };
 };
 
 export function loader() {
@@ -35,10 +40,11 @@ export default function Index() {
       prevTheme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT
     );
   };
+  const state = useTransition();
 
   return (
     <div>
-      <Navbar theme={theme} toggleTheme={toggleTheme} />
+      <Navbar theme={theme} toggleTheme={toggleTheme} state={state} />
       <main>
         <div className="lg:flex lg:justify-between lg:w-[80%] lg:mx-auto">
           <div className="w-[90%] m-auto mt-4 relative flex items-center lg:w-[50%]">
@@ -73,7 +79,13 @@ export default function Index() {
           </div>
         </div>
         <div className="grid grid-cols-1 w-[80%] m-auto items-center mt-4 lg:grid-cols-4 lg:gap-4">
-          <Suspense fallback={<h1>Loading....</h1>}>
+          <Suspense
+            fallback={Array(8)
+              .fill(1)
+              .map((index) => {
+                return <SkeletonCard key={index} />;
+              })}
+          >
             <Await
               resolve={data.countries}
               errorElement={<p>There was an error!</p>}

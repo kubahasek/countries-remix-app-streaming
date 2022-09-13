@@ -1,5 +1,5 @@
 import type { LoaderFunction } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData, useTransition } from "@remix-run/react";
 import { useEffect } from "react";
 import { Theme, useTheme } from "utils/theme-provider";
 import Navbar from "~/components/Navbar";
@@ -61,6 +61,7 @@ export default function CountryDetail() {
   const countryData: Country = useLoaderData().countryData;
   const [theme, setTheme] = useTheme();
   const borderCountries = useLoaderData().borderCountries;
+  const state = useTransition();
 
   const toggleTheme = () => {
     setTheme((prevTheme) =>
@@ -70,7 +71,7 @@ export default function CountryDetail() {
 
   return (
     <div>
-      <Navbar theme={theme} toggleTheme={toggleTheme} />
+      <Navbar theme={theme} toggleTheme={toggleTheme} state={state} />
       <div className="lg:w-[80%] lg:mx-auto">
         <Link to="/">
           <div className="mt-4 ml-4 p-3 shadow-xl text-center w-1/3 hover:scale-110 transition-all dark:bg-darkblue dark:text-white lg:w-1/6 lg:ml-0">
