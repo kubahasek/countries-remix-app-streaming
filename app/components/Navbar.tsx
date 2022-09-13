@@ -14,10 +14,13 @@ const Navbar = ({
   theme: Theme | null;
   state: Transition;
 }) => {
-  const showLoading = useSpinDelay(state.state === "loading", {
-    delay: 200,
-    minDuration: 300,
-  });
+  const showLoading = useSpinDelay(
+    state.state === "loading" || state.state === "submitting",
+    {
+      delay: 200,
+      minDuration: 300,
+    }
+  );
   return (
     <header>
       <nav className="flex shadow-lg p-7 justify-between">
